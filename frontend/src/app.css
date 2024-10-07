@@ -1,0 +1,14 @@
+.usertable th{
+    @apply  text-base font-serif border 
+}
+.usertable{
+    @apply bg-white border  
+}
+.usertable td{
+    @apply text-base p-3 font-serif text-center border border-gray-300
+}
+/* scrollbar hidden */
+
+.scrollbar-none::-webkit-scrollbar{
+    display: none;
+}
