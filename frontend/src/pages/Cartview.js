@@ -3,6 +3,7 @@ import Summayapi from "../common";
 import context from "../context";
 import { MdDelete } from "react-icons/md";
 import displayINRCurrency from "../helpers/indianCurrency";
+import {loadStripe} from '@stripe/stripe-js';
 const Cartview = () => {
   const [data, setdata] = useState([]);
   const [loading, setloading] = useState(false);
@@ -69,30 +70,54 @@ const Cartview = () => {
     }
   };
 
-  const deleteCartProduct = async(id)=>{
-    const response = await fetch(Summayapi.deletecart.url,{
-        method : Summayapi.deletecart.method,
-        credentials : 'include',
-        headers : {
-            "content-type" : 'application/json'
-        },
-        body : JSON.stringify(
-            {   
-                _id : id,
-            }
-        )
-    })
+  const deleteCartProduct = async (id) => {
+    const response = await fetch(Summayapi.deletecart.url, {
+      method: Summayapi.deletecart.method,
+      credentials: "include",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        _id: id,
+      }),
+    });
 
-    const responseData = await response.json()
+    const responseData = await response.json();
 
-    if(responseData.success){
-        fetchdata()
-        Context.fetchusercart();
+    if (responseData.success) {
+      fetchdata();
+      Context.fetchusercart();
     }
-}
+  };
 
-const totalQty = data.reduce((previousValue,currentValue)=> previousValue + currentValue.quantity,0)
-const totalPrice = data.reduce((preve,curr)=> preve + (curr.quantity * curr?.productId?.sellingPrice) ,0)
+  const handlepayment = async () => {
+    const stripePromise = await loadStripe(process.env.REACT_APP_PUBLIC_KEY);
+    console.log("key",process.env.REACT_APP_PUBLIC_KEY)
+
+    const response = await fetch(Summayapi.payment.url, {
+      method: Summayapi.payment.method,
+      credentials: "include",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        cartItems: data,
+      }),
+    });
+    const responsedata = await response.json();
+    if(responsedata?.id){
+      stripePromise.redirectToCheckout({sessionId:responsedata.id})
+    }
+    console.log("payment response", responsedata);
+  };
+  const totalQty = data.reduce(
+    (previousValue, currentValue) => previousValue + currentValue.quantity,
+    0
+  );
+  const totalPrice = data.reduce(
+    (preve, curr) => preve + curr.quantity * curr?.productId?.sellingPrice,
+    0
+  );
 
   return (
     <div className=" container mx-auto">
@@ -173,36 +198,36 @@ const totalPrice = data.reduce((preve,curr)=> preve + (curr.quantity * curr?.pro
                 );
               })}
         </div>
-
-        <div className='mt-5 lg:mt-0 w-full max-w-sm'>
-                        {
-                            loading ? (
-                            <div className='h-36 bg-slate-200 border border-slate-300 animate-pulse'>
-                                
-                            </div>
-                            ) : (
-                                <div className='h-36 bg-white'>
-                                    <h2 className='text-white bg-red-600 px-4 py-1'>Summary</h2>
-                                    <div className='flex items-center justify-between px-4 gap-2 font-medium text-lg text-slate-600'>
-                                        <p>Quantity</p>
-                                        <p>{totalQty}</p>
-                                    </div>
-
-                                    <div className='flex items-center justify-between px-4 gap-2 font-medium text-lg text-slate-600'>
-                                        <p>Total Price</p>
-                                        <p>{displayINRCurrency(totalPrice)}</p>    
-                                    </div>
-
-                                    <button className='bg-blue-600 p-2 text-white w-full mt-2'>Payment</button>
-
-                                </div>
-                            )
-                        }
+        {data[0] && (
+          <div className="mt-5 lg:mt-0 w-full max-w-sm">
+            {loading ? (
+              <div className="h-36 bg-slate-200 border border-slate-300 animate-pulse"></div>
+            ) : (
+              <div className="h-36 bg-white">
+                <h2 className="text-white bg-red-600 px-4 py-1">Summary</h2>
+                <div className="flex items-center justify-between px-4 gap-2 font-medium text-lg text-slate-600">
+                  <p>Quantity</p>
+                  <p>{totalQty}</p>
                 </div>
-        </div>
-    </div>
-  )
-}
 
+                <div className="flex items-center justify-between px-4 gap-2 font-medium text-lg text-slate-600">
+                  <p>Total Price</p>
+                  <p>{displayINRCurrency(totalPrice)}</p>
+                </div>
+
+                <button
+                  className="bg-blue-600 p-2 text-white w-full mt-2"
+                  onClick={handlepayment}
+                >
+                  Payment
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default Cartview;

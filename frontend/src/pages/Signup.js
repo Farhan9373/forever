@@ -54,7 +54,7 @@ const Signup = () => {
         toast.success(responsedata.message);
         navigate("/");
       }
-      if (responsedata.error);
+      if (responsedata.error)
       {
         toast.error(responsedata.message);
       }

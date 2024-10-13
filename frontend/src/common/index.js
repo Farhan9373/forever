@@ -1,4 +1,6 @@
-const backenedConnect = "http://localhost:8000";
+const backenedConnect = process.env.REACT_APP_Backend;
+
+// const backenedConnect = "http://localhost:8000";
 
 const Summayapi = {
   signUp: {
@@ -75,6 +77,10 @@ const Summayapi = {
   },
   filterproduct:{
     url:`${backenedConnect}/api/filter-product`,
+    method: "POST",
+  },
+  payment:{
+    url:`${backenedConnect}/api/checkout`,
     method: "POST",
   },
 };

@@ -79,7 +79,7 @@ console.log("data login",data);
                 </div>
                <Link to='/forgot' className="font-serif mt-1 pl-2 tracking-tighter ml-auto block underline hover: text-red-500">
                
-               Forgot Password?
+               {/* Forgot Password? */}
                </Link>
               </div>
             </div>

@@ -19,6 +19,7 @@ import { updateAddToCartProduct } from "../controllers/updateAddToCart.js";
 import { deleteAddToCartProduct } from "../controllers/deleteAddToCart.js";
 import { searchProduct } from "../controllers/searchProduct.js";
 import { filterProductController } from "../controllers/filterproduct.js";
+import { paymentcontrol } from "../controllers/order/paymentController.js";
 
 const router = express.Router();
 
@@ -47,7 +48,8 @@ router.route("/viewcart-item").get(auth,cartview);
 router.route("/updatecart-view").post(auth,updateAddToCartProduct);
 router.route("/deletecart-view").post(auth,deleteAddToCartProduct);
 
-
+//payment and order
+router.route("/checkout").post(auth,paymentcontrol);
 
 
 export default router;
