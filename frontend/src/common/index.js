@@ -1,4 +1,4 @@
-const backenedConnect = process.env.REACT_APP_Backend;
+const backenedConnect = process.env.REACT_APP_BACKEND;
 
 // const backenedConnect = "http://localhost:8000";
 
