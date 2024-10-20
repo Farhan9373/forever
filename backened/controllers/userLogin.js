@@ -36,6 +36,7 @@ export const login = async (req, res) => {
           const tokenOption = {
             httpOnly: true,
             secure: true,
+            sameSite:'None'
           };
           const token = jwt.sign(
             {
