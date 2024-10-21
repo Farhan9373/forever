@@ -53,13 +53,12 @@ const Signup = () => {
       if (responsedata.success) {
         toast.success(responsedata.message);
         navigate("/");
-      }
-      if (responsedata.error)
-      {
+      } else if (responsedata.error) {
         toast.error(responsedata.message);
+      } else {
+        // For password mismatch or other client-side checks
+        toast.error("Please check your password");
       }
-    } else {
-      console.log("please check your password");
     }
   };
   //completed

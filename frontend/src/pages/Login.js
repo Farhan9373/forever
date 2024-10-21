@@ -23,28 +23,40 @@ const handleonchange=(e)=>{
       [name]: value,
     }));
   }
-const handlesumbit=async(e)=>{
-  e.preventDefault();
-  const dataresponse = await fetch(Summayapi.login.url, {
-    method: Summayapi.login.method,
-    credentials:'include',
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-  const responsedata = await dataresponse.json();
-  if(responsedata.success){
-    toast.success(responsedata.message)
-
-      navigate("/")
-      fetchuserdetail()
-      fetchusercart()
+  const handlesumbit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const dataresponse = await fetch(Summayapi.login.url, {
+        method: Summayapi.login.method,
+        credentials: 'include',  // Include credentials (for cookies like JWT)
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+    
+      const responsedata = await dataresponse.json();
+      console.log("API response:", responsedata);  // For debugging, log the response
+    
+      // Check if the login was successful
+      if (responsedata.success) {
+        toast.success(responsedata.message);
+        navigate("/");
+        fetchuserdetail();  // Make sure this function is defined
+        fetchusercart();    // Make sure this function is defined
+      } else {
+        // Handle failure if `success` is false
+        toast.error(responsedata.message || "Login failed");
+      }
+    
+    } catch (error) {
+      // Handle any unexpected errors, such as network issues
+      toast.error("An error occurred, please try again later");
+      console.error("Error during login:", error);
+    }
   }
-  if(responsedata.error){
-    toast.error(responsedata.error);
-}
-}
+  
 console.log("data login",data);
   return (
     <section id="login">
